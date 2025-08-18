@@ -1,22 +1,22 @@
-data "aws_ami" "example" {
+# data "aws_ami" "example" {
 
-  most_recent = true
-  owners      = ["amazon"]
+#   most_recent = true
+#   owners      = ["amazon"]
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20231207"]
-  }
+#   filter {
+#     name   = "name"
+#     values = ["ami-0d1b5a8c13042c939"]
+#   }
 
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
+#   filter {
+#     name   = "root-device-type"
+#     values = ["ebs"]
+#   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
+#   filter {
+#     name   = "virtualization-type"
+#     values = ["hvm"]
+#   }
+# }
 
 data "aws_availability_zones" "azs" {}

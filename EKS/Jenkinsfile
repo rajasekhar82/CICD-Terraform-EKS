@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout SCM'){
             steps{
                 script{
-                    //Generate  using pipeline syntax
+                    git credentialsId: 'github', url: 'https://github.com/rajasekhar82/CICD-Terraform-EKS.git'
                 }
             }
         }

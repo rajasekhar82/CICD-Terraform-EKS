@@ -1,8 +1,11 @@
 #!/bin/bash
 # Java installation for jenkins
 
+# sudo apt update
+# sudo apt install openjdk-11-jre -y
 sudo apt update
-sudo apt install openjdk-11-jre -y
+sudo apt install openjdk-17-jdk -y
+
 
 # Jenkins installation 
 curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
