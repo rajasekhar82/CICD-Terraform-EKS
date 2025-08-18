@@ -31,13 +31,38 @@ module "vpc" {
 
 #EKS
 
+# module "eks" {
+#   source                         = "terraform-aws-modules/eks/aws"
+#   cluster_name                   = "my-eks-cluster"
+#   cluster_version                = "1.29"
+#   cluster_endpoint_public_access = true
+#   vpc_id                         = module.vpc.vpc_id
+#   subnet_ids                     = module.vpc.private_subnets
+
+#   eks_managed_node_groups = {
+#     nodes = {
+#       min_size       = 1
+#       max_size       = 3
+#       desired_size   = 2
+#       instance_types = var.instance_types
+#     }
+#   }
+#   tags = {
+#     Environment = "dev"
+#     Terraform   = "true"
+#   }
+# }
+
 module "eks" {
-  source                         = "terraform-aws-modules/eks/aws"
-  cluster_name                   = "my-eks-cluster"
-  cluster_version                = "1.29"
-  cluster_endpoint_public_access = true
-  vpc_id                         = module.vpc.vpc_id
-  subnet_ids                     = module.vpc.private_subnets
+  source  = "terraform-aws-modules/eks/aws"
+  version = "20.8.5"   # or latest
+
+  cluster_name    = "my-eks-cluster"      # ✅ still valid in v20+
+  cluster_version = "1.29"                # ✅ still valid in v20+
+  cluster_endpoint_public_access = true   # ✅ still valid in v20+
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_groups = {
     nodes = {
@@ -47,6 +72,7 @@ module "eks" {
       instance_types = var.instance_types
     }
   }
+
   tags = {
     Environment = "dev"
     Terraform   = "true"
