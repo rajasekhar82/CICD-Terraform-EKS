@@ -1,14 +1,16 @@
-#Vpc
+# -------------------------------
+# VPC Module
+# -------------------------------
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.8.1"
 
-  name = "eks_cluster_vpc"
+  name = "eks-cluster-vpc"
   cidr = var.vpc_cidr
 
-  azs             = data.aws_availability_zones.azs.names
+  azs             = data.aws_availability_zones.available.names
   public_subnets  = var.public_subnets
   private_subnets = var.private_subnets
-
 
   enable_dns_hostnames = true
   enable_nat_gateway   = true
@@ -17,55 +19,34 @@ module "vpc" {
   tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
   }
+
   public_subnet_tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
-    "kubernetes.io/role/elb"               = 1
-
+    "kubernetes.io/role/elb"               = "1"
   }
+
   private_subnet_tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
-    "kubernetes.io/role/private_elb"       = 1
-
+    "kubernetes.io/role/internal-elb"      = "1"
   }
 }
 
-#EKS
-
-# module "eks" {
-#   source                         = "terraform-aws-modules/eks/aws"
-#   cluster_name                   = "my-eks-cluster"
-#   cluster_version                = "1.29"
-#   cluster_endpoint_public_access = true
-#   vpc_id                         = module.vpc.vpc_id
-#   subnet_ids                     = module.vpc.private_subnets
-
-#   eks_managed_node_groups = {
-#     nodes = {
-#       min_size       = 1
-#       max_size       = 3
-#       desired_size   = 2
-#       instance_types = var.instance_types
-#     }
-#   }
-#   tags = {
-#     Environment = "dev"
-#     Terraform   = "true"
-#   }
-# }
-
+# -------------------------------
+# EKS Module
+# -------------------------------
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.5"   # or latest
+  version = "20.8.5"
 
-  cluster_name    = "my-eks-cluster"      # ✅ still valid in v20+
-  cluster_version = "1.29"                # ✅ still valid in v20+
-  cluster_endpoint_public_access = true   # ✅ still valid in v20+
+  cluster_name                   = "my-eks-cluster"
+  cluster_version                = "1.29"
+  cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
   eks_managed_node_groups = {
-    nodes = {
+    default = {
       min_size       = 1
       max_size       = 3
       desired_size   = 2
@@ -79,10 +60,28 @@ module "eks" {
   }
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
+# -------------------------------
+# Data sources (cluster auth & info)
+# -------------------------------
+data "aws_eks_cluster" "this" {
+  name = module.eks.cluster_name
 }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
+data "aws_eks_cluster_auth" "this" {
+  name = module.eks.cluster_name
+}
+
+# -------------------------------
+# Outputs (optional)
+# -------------------------------
+output "cluster_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
 }
