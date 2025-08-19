@@ -1,19 +1,19 @@
 variable "vpc_cidr" {
-  description = "Vpc CIDR"
+  description = "VPC CIDR"
   type        = string
 }
 
 variable "public_subnets" {
-  description = "public_subnets CIDR"
+  description = "Public subnet CIDRs"
   type        = list(string)
 }
 
 variable "private_subnets" {
-  description = "private_subnets CIDR"
+  description = "Private subnet CIDRs"
   type        = list(string)
 }
 
 variable "instance_types" {
-  description = "Node Instances"
+  description = "EKS node instance types"
   type        = list(string)
 }

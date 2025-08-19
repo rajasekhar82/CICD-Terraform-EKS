@@ -16,6 +16,7 @@ module "vpc" {
   enable_nat_gateway   = true
   single_nat_gateway   = true
 
+  # (Optional) tags used by legacy k8s load balancer discovery
   tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
   }
@@ -32,14 +33,14 @@ module "vpc" {
 }
 
 # -------------------------------
-# EKS Module
+# EKS Module (v21 requires AWS provider v6+)
 # -------------------------------
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.8.5"
+  version = "21.0.5"
 
   cluster_name                   = "my-eks-cluster"
-  cluster_version                = "1.29"
+  cluster_version                = "1.33"
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
@@ -72,7 +73,7 @@ data "aws_eks_cluster_auth" "this" {
 }
 
 # -------------------------------
-# Outputs (optional)
+# Outputs
 # -------------------------------
 output "cluster_endpoint" {
   value = module.eks.cluster_endpoint
